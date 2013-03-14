@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoApp.Powershell", "CoApp.Powershell\CoApp.Powershell.csproj", "{C417049A-3DA0-4F3B-A561-FEAF4BE53BD3}"
