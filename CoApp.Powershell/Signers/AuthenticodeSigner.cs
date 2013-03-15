@@ -17,7 +17,7 @@ namespace ClrPlus.Signing.Signers
             BinaryLoadOptions.MD5;
 
         public AuthenticodeSigner(X509Certificate2 certificate) {
-            Certificate = certificate;
+            Certificate = certificate; 
         }
         public X509Certificate2 Certificate {get; private set;}
 
