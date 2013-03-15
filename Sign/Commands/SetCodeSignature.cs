@@ -12,6 +12,7 @@
 
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
 using System.Security.Cryptography.X509Certificates;
@@ -78,33 +79,39 @@ namespace ClrPlus.Signing.Commands {
             
                 using (var ps = Runspace.DefaultRunspace.Dynamic())
                 {
-
+                    
                     if (!String.IsNullOrWhiteSpace(CertificateString))
                     {
-                        Certificate = Enumerable.First(ps.GetItem(Path:CertificateString));
+                        var certs = ps.GetItem(Path:CertificateString);
+                        SpitOutABunchOfErrors(certs.Error);
+                        Certificate = Enumerable.First(certs);
                     }
                    
 
                     var tempPath = CreateTempPath(inputPath);
-                    System.Console.WriteLine(tempPath);
-                    ps.CopyItemEx(Path: inputPath.AbsolutePath, Destination:tempPath);
+                    
+                    var items = ps.CopyItemEx(Path: inputPath.AbsolutePath, Destination:tempPath);
+                    SpitOutABunchOfErrors(items.Error);
+
                     if (AttemptToSignAuthenticode(tempPath) || AttemptToSignOPC(tempPath))
                     {
                         if (Destination == null)
                         {
-                         
-                            ps.CopyItemEx(Path: tempPath, Destination: Path, Force: true);
+
+                            items = ps.CopyItemEx(Path: tempPath, Destination: Path, Force: true);
+                            SpitOutABunchOfErrors(items.Error);
                             WriteObject(inputPath);
                         }
                         else
                         {
-                            ps.CopyItemEx(Path:tempPath, Destination: outputPath);
+                            items = ps.CopyItemEx(Path: tempPath, Destination: outputPath);
+                            SpitOutABunchOfErrors(items.Error);
                             WriteObject(outputPath);
                         }
 
                     }
 
-
+                    
                 }
           
             } catch (Exception e ) {
@@ -127,8 +134,8 @@ namespace ClrPlus.Signing.Commands {
                 AttemptToSign(() => authenticode.Sign(path, StrongName));
 
                 return true;
-            } catch (Exception) {
-
+            } catch (Exception e) {
+                WriteError(new ErrorRecord(e, "1", ErrorCategory.NotSpecified, null));
                 return false;
             }
         
@@ -141,9 +148,9 @@ namespace ClrPlus.Signing.Commands {
 
                 return AttemptToSign( () => opc.Sign(path));
                 
-            } catch (Exception) {
+            } catch (Exception e) {
                 
-                
+                ThrowTerminatingError(new ErrorRecord(e, "0",ErrorCategory.NotSpecified, null));
                 return false;
             }
         }
@@ -225,6 +232,19 @@ namespace ClrPlus.Signing.Commands {
                 throw new ClrPlusException("Unable to create location resolver for {0}".format(providerInfo.Name));
             }
             return result;
+        }
+
+        public void SpitOutABunchOfErrors(IEnumerable<ErrorRecord> errors)
+        {
+            if (errors.Any())
+            {
+                foreach (var error in errors.TakeAllBut(1))
+                {
+                    WriteError(error);
+                }
+                ThrowTerminatingError(errors.Last());
+            }
+
         }
     }
 

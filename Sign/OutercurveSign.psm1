@@ -67,5 +67,3 @@ $($_.Exception) $($_.InvocationInfo.PositionMessage)
 	Remove-PSDrive temp
 }
 
-import-module .\ClrPlus.dll
-import-module .\Sign.dll

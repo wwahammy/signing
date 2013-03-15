@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="OutercurveSign" Language="1033" Version="1.0.0.0" Manufacturer="Outercurve Foundation" UpgradeCode="c990a6d0-efa3-4050-8db5-97387a4af838">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate  EmbedCab="yes"/>
+
+		<Feature Id="ProductFeature" Title="OutercurveSign" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="Outercurve" Name="Outercurve">
+          <Directory Id="INSTALLFOLDER" Name="Modules">
+            <Directory Id="OutercurveSignFolder" Name="OutercurveSign"/>
+          </Directory>
+        </Directory>
+
+      </Directory>
+    </Directory>
+	</Fragment>
+
+	<Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="OutercurveSignFolder">
+
+      <Component Id="ClrPlusComponent" >
+        <File Source="$(var.TargetDir)ClrPlus.dll"/>
+
+        <Environment Id="PSModuleInfo"
+                     Action="set" Part="first" Name="PSModulePath" System="yes"
+                     Value="[INSTALLFOLDER]"/>
+      </Component>
+
+      <Component Id="OutercurveSignPSD">
+        <File Source="$(var.TargetDir)OutercurveSign.psd1"/>
+      </Component>
+      <Component Id="SignComponent">
+        <File Source="$(var.TargetDir)ClrPlus.Signing.dll"/>
+      </Component>
+
+      <Component Id="OutercurveSignComponent">
+        <File Source="$(var.TargetDir)OutercurveSign.psm1"/>
+      </Component>
+    </ComponentGroup>
+	</Fragment>
+</Wix>

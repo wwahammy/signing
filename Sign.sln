@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F3CC76
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "OutercurveSign", "OutercurveSign\OutercurveSign.wixproj", "{BE0D7832-C30E-4458-9FA4-9D5453E06FB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{C417049A-3DA0-4F3B-A561-FEAF4BE53BD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C417049A-3DA0-4F3B-A561-FEAF4BE53BD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C417049A-3DA0-4F3B-A561-FEAF4BE53BD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE0D7832-C30E-4458-9FA4-9D5453E06FB8}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{BE0D7832-C30E-4458-9FA4-9D5453E06FB8}.Debug|Any CPU.Build.0 = Debug|x86
+		{BE0D7832-C30E-4458-9FA4-9D5453E06FB8}.Release|Any CPU.ActiveCfg = Release|x86
+		{BE0D7832-C30E-4458-9FA4-9D5453E06FB8}.Release|Any CPU.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
