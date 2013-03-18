@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="CoApp.Powershell" Language="1033" Version="1.8.0.83" Manufacturer="Outercurve Foundation, CoApp Project" UpgradeCode="a43c25d7-b22a-411c-b780-3a83479b1d26">
+		
+    <Package Description="CoApp Developer Tools Installer" InstallPrivileges="elevated" Comments="CoApp Developer Tools Installer" InstallerVersion="200" Compressed="yes"></Package>
+
+    <Upgrade Id="FBD01CDC-605E-4E78-AC8E-C97913C34397">
+      <UpgradeVersion OnlyDetect="no" Property="PREVIOUSFOUND" Minimum="1.0.0" IncludeMinimum="yes" Maximum="1.8.0.83" IncludeMaximum="no"></UpgradeVersion>
+    </Upgrade>
+    
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf"></WixVariable>
+
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="Outercurve" Name="Outercurve Foundation">
+          <Directory Id="INSTALLFOLDER" Name="Modules">
+            <Directory Id="CoApp" Name="CoApp"/>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <ComponentGroup Id="CoApp" Directory="CoApp">
+      <Component Id="CoApp" >
+      <File Source="$(var.SolutionDir)\output\v40\AnyCPU\$(var.Configuration)\bin\CoApp.Powershell.Tools.dll"/>
+      <File Source="$(var.SolutionDir)\output\v40\AnyCPU\$(var.Configuration)\bin\nuget.exe"/>
+      <File Source="$(var.SolutionDir)\output\v40\AnyCPU\$(var.Configuration)\bin\CoApp.psd1"/>
+        
+      <Environment Id="PSModuleInfo"
+                     Action="set" Part="first" Name="PSModulePath" System="yes"
+                     Value="[INSTALLFOLDER]"/>
+      
+      </Component>
+    </ComponentGroup>
+
+    
+    <Property Id="ARPHELPLINK" Value="http://CoApp.org/help"></Property>
+    <Property Id="ARPURLINFOABOUT" Value="http://CoApp.org"></Property>
+    <Property Id="WixUI_InstallDir" Value="INSTALLDIR"></Property>
+
+    <Feature Id="PowershellModule" Title="CoApp Powershell Module" Level="1" ConfigurableDirectory="INSTALLFOLDER">
+      <ComponentGroupRef Id="CoApp"></ComponentGroupRef>
+    </Feature>
+
+   
+
+  </Product>
+
+	
+  
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<!-- <Component Id="ProductComponent"> -->
+				<!-- TODO: Insert files, registry keys, and other resources here. -->
+			<!-- </Component> -->
+		</ComponentGroup>
+	</Fragment>
+</Wix>
