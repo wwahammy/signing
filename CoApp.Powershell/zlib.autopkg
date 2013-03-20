@@ -1,0 +1,121 @@
+﻿@import template.autopkg;
+
+configurations {
+	Platform {
+		key : "Platform"; // ie, applies when Condition="$(Platform) == 'Win32'
+		choices: { Win32, x64, ARM };
+	};
+
+	Toolset { 
+		key : "PlatformToolset"; // ie, applies when Condition="$(PlatformToolset) == 'v110'
+		choices: { v110, v100 };
+	};
+
+	Linkage {
+		// the first choice is the default
+		// so, unless a choice is made, it will assume the first choice
+		choices: { dynamic, stdcall, static };
+	}
+};
+
+nuget {
+	// the nuspec file metadata. Gets created/updated on build
+	nuspec {
+		id : zlib;
+		version : 1.2.5.48;
+		title: ZLib compression library;
+		authors: Garrett Serack;
+		owners: Garrett Serack;
+		licenseUrl: "http://opensource.org/licenses/Apache-2.0";
+		projectUrl: "http://perpetual-motion.com/ClrPlus";
+		iconUrl: "http://coapp.org/images/logo-small.png";
+		requireLicenseAcceptance:false;
+		summary:A zlib library;
+		description: "A native zlib library";
+		releaseNotes: this is a test build.;
+		copyright: Copyright 2013;
+		tags: { zlib };
+	};
+		
+	// the files that go into the content folders
+	// (inserted into the nuspec file)
+	files {
+		include: { .\include\*.h; };
+
+		docs: {  docs\**; };
+    
+		condition[Win32,v110,dynamic] { 
+			lib: { .\output\win32\release\lib\*.lib };
+		}
+
+		condition[x64,v110,dynamic] {
+			lib: { .\output\x64\release\lib\*.lib };
+		}
+		
+		condition[Win32,v110,dynamic] {
+			bin: { .\output\win32\release\bin\zlib1.dll; };
+		}
+
+		condition[Win32,v110,stdcall] {
+			bin: { .\output\win32\release\bin\zlibwapi.dll; };
+		}
+
+		condition[x64,v110,dynamic] {
+			bin: { .\output\win32\release\bin\zlib1.dll; };
+		}
+
+	};
+
+	// the VC++ .props file that gets generated and inserted into the ${d_content} folder
+	props { 
+		// we're going to generate a number of properties anyway. 
+        // so even if the packager doesn't specify the props object 
+        // we're going to make this file.
+	};
+
+	// the VC++ .targets file that gets generated and inserted into the ${d_content} folder
+	targets {
+		// every configuration needs to reference the include directories.
+		Includes += ${pkg_root}${d_include};
+
+		condition[Win32,v110,dynamic] { 
+			Libraries += ${pkg_root}${d_lib}\zlib1.lib;
+		};
+
+		condition[x64,v110,dynamic] {
+			Libraries += ${pkg_root}${d_lib}\zlib1.lib;
+		}
+
+		condition[v110,Win32,static] {
+			Target[AfterBuild] {
+				.Copy {
+					SourceFiles = ${pkg_root}${d_bin}\*;
+					DestinationFolder = $(TargetDir);
+					SkipUnchangedFiles=true;
+				}
+			}
+
+			Libraries += ${pkg_root}${d_lib}\zlibstat.lib;
+		};
+
+		condition[Win32,v110,stdcall] {
+			Libraries += ${pkg_root}${d_lib}\zlibwapi.lib;
+		};
+
+		condition[x64,v110,static] {
+			Libraries += ${pkg_root}${d_lib}\zlibstat.lib;
+		};
+
+        // todo: the copy commands to copy the dlls into the build folder.
+
+		Target[AfterBuild] {
+			.Copy {
+				SourceFiles = ${pkg_root}${d_bin}\*;
+				DestinationFolder = $(TargetDir);
+				SkipUnchangedFiles=true;
+			}
+		};
+
+	};
+}
+
