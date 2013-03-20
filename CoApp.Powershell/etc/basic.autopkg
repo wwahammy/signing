@@ -1,0 +1,18 @@
+﻿// Basic Platform Configurations 
+
+configurations {
+	Platform {
+		key : "Platform"; 
+		choices: { Win32, x64, ARM, AnyCPU };
+	};
+
+	Configuration {
+		key : "Configuration"; 
+		choices: { Release, Debug };
+	};
+
+	Toolset { 
+		key : "PlatformToolset"; 
+		choices: { v110, v100 };
+	};
+};
