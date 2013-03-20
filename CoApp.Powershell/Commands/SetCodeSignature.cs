@@ -10,22 +10,21 @@
 // </license>
 //-----------------------------------------------------------------------
 
+namespace CoApp.Powershell.Commands {
+    using System;
+    using System.IO;
+    using System.Management.Automation;
+    using System.Security.Cryptography.X509Certificates;
+    using System.Linq;
+    using System.Management.Automation.Runspaces;
+    using ClrPlus.Core.Exceptions;
+    using ClrPlus.Core.Extensions;
+    using ClrPlus.Powershell.Core;
+    using ClrPlus.Powershell.Provider.Base;
+    using ClrPlus.Powershell.Provider.Filesystem;
+    using ClrPlus.Powershell.Rest.Commands;
+    using ClrPlus.Signing.Signers;
 
-using System;
-using System.IO;
-using System.Management.Automation;
-using System.Security.Cryptography.X509Certificates;
-using System.Linq;
-using System.Management.Automation.Runspaces;
-using ClrPlus.Core.Exceptions;
-using ClrPlus.Core.Extensions;
-using ClrPlus.Powershell.Core;
-using ClrPlus.Powershell.Provider.Base;
-using ClrPlus.Powershell.Provider.Filesystem;
-using ClrPlus.Powershell.Rest.Commands;
-using ClrPlus.Signing.Signers;
-
-namespace ClrPlus.Signing.Commands {
     [Cmdlet(VerbsCommon.Set, "CodeSignature")]
     public class SetCodeSignature : RestableCmdlet<SetCodeSignature> {
 
@@ -56,17 +55,11 @@ namespace ClrPlus.Signing.Commands {
 
         protected override void ProcessRecord()
         {
-
-
             //we need to absolutize(?) the path so when it gets to the server, it's not wildly confused about what to do with it
             var inputPath = ResolveSource();
             Path = inputPath.AbsolutePath;
             ILocation outputPath = String.IsNullOrWhiteSpace(Destination) ? inputPath : ResolveDestinationLocation();
             Destination = outputPath.AbsolutePath;
-           
-                
-            
-
 
             if (Remote)
             {

@@ -132,6 +132,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Data.OData.5.2.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Deployment.WindowsInstaller, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
+      <HintPath>..\packages\DTF-Unofficial.3.6.2928\lib\Microsoft.Deployment.WindowsInstaller.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.PowerShell.Commands.Management, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\Microsoft.PowerShell.Commands.Management.dll</HintPath>
@@ -190,7 +193,9 @@
   <ItemGroup>
     <Compile Include="AssemblyStrongName.cs" />
     <Compile Include="Commands\GetPublicCertificate.cs" />
+    <Compile Include="Commands\InvokeBuildCmdlet.cs" />
     <Compile Include="Commands\SetCodeSignature.cs" />
+    <Compile Include="Commands\ShowCoAppToolsVersion.cs" />
     <Compile Include="Commands\WriteNugetPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Signers\AuthenticodeSigner.cs" />
@@ -201,7 +206,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="Template.autopkg">
+    <None Include="etc\basic.autopkg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="zlib.autopkg">
@@ -209,7 +214,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NuGet.exe">
+    <None Include="etc\autopackage.targets" />
+    <Content Include="etc\NuGet.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -221,7 +227,11 @@
   <PropertyGroup>
     <PostBuildEvent>cd $(TargetDir)
     
-$(SolutionDir)\tools\il-repack.exe /out:CoApp.Powershell.Tools.dll CoApp.Powershell.dll ClrPlus.Core.dll ClrPlus.Platform.dll ClrPlus.Powershell.Azure.dll ClrPlus.Powershell.Core.dll ClrPlus.Powershell.Provider.dll ClrPlus.Powershell.Rest.dll ClrPlus.Scripting.dll ClrPlus.Scripting.MsBuild.dll ClrPlus.Tasks.dll ClrPlus.Windows.Api.dll ClrPlus.Windows.PeBinary.dll Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll Microsoft.Cci.AstsProjectedAsCodeModel.dll Microsoft.Cci.CodeModel.dll Microsoft.Cci.CodeModelToIL.dll Microsoft.Cci.ContractExtractor.dll Microsoft.Cci.CSharpSourceEmitter.dll Microsoft.Cci.ILGenerator.dll Microsoft.Cci.MetadataHelper.dll Microsoft.Cci.MetadataModel.dll Microsoft.Cci.MutableCodeModel.dll Microsoft.Cci.MutableMetadataModel.dll Microsoft.Cci.NewILToCodeModel.dll Microsoft.Cci.PdbReader.dll Microsoft.Cci.PdbWriter.dll Microsoft.Cci.PeReader.dll Microsoft.Cci.PeWriter.dll Microsoft.Cci.ReflectionEmitter.dll Microsoft.Cci.SourceEmitter.dll Microsoft.Cci.SourceModel.dll Microsoft.CompilerServices.AsyncTargetingPack.Net4.dll Microsoft.WindowsAzure.Configuration.dll Microsoft.WindowsAzure.Storage.dll ServiceStack.Common.dll ServiceStack.dll ServiceStack.Interfaces.dll ServiceStack.ServiceInterface.dll ServiceStack.Text.dll  ServiceStack.OrmLite.dll</PostBuildEvent>
+$(SolutionDir)\tools\il-repack.exe /out:CoApp.Powershell.Tools.dll CoApp.Powershell.dll ClrPlus.Core.dll ClrPlus.Platform.dll ClrPlus.Powershell.Azure.dll ClrPlus.Powershell.Core.dll ClrPlus.Powershell.Provider.dll ClrPlus.Powershell.Rest.dll ClrPlus.Scripting.dll ClrPlus.Scripting.MsBuild.dll ClrPlus.Tasks.dll ClrPlus.Windows.Api.dll ClrPlus.Windows.PeBinary.dll Microsoft.Cci.Analysis.ControlAndDataFlowGraph.dll Microsoft.Cci.AstsProjectedAsCodeModel.dll Microsoft.Cci.CodeModel.dll Microsoft.Cci.CodeModelToIL.dll Microsoft.Cci.ContractExtractor.dll Microsoft.Cci.CSharpSourceEmitter.dll Microsoft.Cci.ILGenerator.dll Microsoft.Cci.MetadataHelper.dll Microsoft.Cci.MetadataModel.dll Microsoft.Cci.MutableCodeModel.dll Microsoft.Cci.MutableMetadataModel.dll Microsoft.Cci.NewILToCodeModel.dll Microsoft.Cci.PdbReader.dll Microsoft.Cci.PdbWriter.dll Microsoft.Cci.PeReader.dll Microsoft.Cci.PeWriter.dll Microsoft.Cci.ReflectionEmitter.dll Microsoft.Cci.SourceEmitter.dll Microsoft.Cci.SourceModel.dll Microsoft.CompilerServices.AsyncTargetingPack.Net4.dll Microsoft.WindowsAzure.Configuration.dll Microsoft.WindowsAzure.Storage.dll ServiceStack.Common.dll ServiceStack.dll ServiceStack.Interfaces.dll ServiceStack.ServiceInterface.dll ServiceStack.Text.dll  ServiceStack.OrmLite.dll Microsoft.Deployment.WindowsInstaller.dll
+
+"C:\Program Files (x86)\Windows Kits\8.0\bin\x86\signtool.exe" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll $(TargetDir)\CoApp.Powershell.Tools.dll
+
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>@echo on
@@ -245,7 +255,7 @@ echo %25NEWVER%25
 call replace.cmd "\[assembly: AssemblyVersion.*" "[assembly: AssemblyVersion(""%25NEWVER%25"")]" %25SLNDIR%25\CoApp.Powershell\assemblystrongname.cs
 call replace.cmd "\[assembly: AssemblyFileVersion.*" "[assembly: AssemblyFileVersion(""%25NEWVER%25"")]" %25SLNDIR%25\CoApp.Powershell\assemblystrongname.cs
 
-call replace.cmd ".Product.Id=""\*"".Name=""CoApp.Powershell"".*" "&lt;Product Id=""*"" Name=""CoApp.Powershell"" Language=""1033"" Version=""%25NEWVER%25"" Manufacturer=""Outercurve Foundation, CoApp Project"" UpgradeCode=""a43c25d7-b22a-411c-b780-3a83479b1d26""&gt;" %25SLNDIR%25\Installer\Product.wxs
+call replace.cmd ".Product.Id=""\*"".Name=""CoApp.Powershell.*" "&lt;Product Id=""*"" Name=""CoApp.Powershell (v%25NEWVER%25)"" Language=""1033"" Version=""%25NEWVER%25"" Manufacturer=""Outercurve Foundation, CoApp Project"" UpgradeCode=""a43c25d7-b22a-411c-b780-3a83479b1d26""&gt;" %25SLNDIR%25\Installer\Product.wxs
 call replace.cmd ".UpgradeVersion.OnlyDetect=""no"".*" "&lt;UpgradeVersion OnlyDetect=""no"" Property=""PREVIOUSFOUND"" Minimum=""1.0.0"" IncludeMinimum=""yes"" Maximum=""%25NEWVER%25"" IncludeMaximum=""no""&gt;&lt;/UpgradeVersion&gt;" %25SLNDIR%25\Installer\Product.wxs</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

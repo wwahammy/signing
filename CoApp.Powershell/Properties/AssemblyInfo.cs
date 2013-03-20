@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CoApp.Powershell.Tools")]
-[assembly: AssemblyDescription("Powershell Cmdlets for Developers using CoApp and Nuget")]
+[assembly: AssemblyDescription("Powershell Cmdlets for Developers using CoApp and NuGet")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 

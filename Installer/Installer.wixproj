@@ -22,6 +22,17 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
+  <PropertyGroup>
+    <PostBuildEvent>cd $(TargetDir)
+
+"C:\Program Files (x86)\Windows Kits\8.0\bin\x86\signtool.exe" sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll $(TargetDir)\coapp.tools.powershell.msi 
+
+powershell copy-itemex -force $(TargetDir)\CoApp.Tools.Powershell.msi coapp:files\
+
+
+pskill powershell
+msiexec /i $(TargetDir)\CoApp.Tools.Powershell.msi</PostBuildEvent>
+  </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
 	Other similar extension points exist, see Wix.targets.

@@ -9,7 +9,7 @@ if( process.argv.length < 3 )  {
 var inp = fs.createReadStream(process.argv[2] );
 
 inp.on('data', function(chunk) {  
-    var newVer = (''+chunk).replace(/(\d*).(\d*).(\d*).(\d*)/, function(a,b,c,d,e) { return b+'.'+c+'.'+d+'.'+(parseInt(e)+1);}); 
+    var newVer = (''+chunk).replace(/(\d*).(\d*).(\d*).(\d*)/, function(a,b,c,d,e) { return b+'.'+c+'.'+(parseInt(d)+1)+'.'+0;}); 
     inp.close();
         
     var outp = fs.createWriteStream(process.argv[2]);
