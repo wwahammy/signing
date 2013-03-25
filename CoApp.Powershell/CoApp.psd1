@@ -59,7 +59,7 @@ Copyright = '(c) 2013 CoApp Project, Outercurve Foundation.'
 # FormatsToProcess = @()
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = @('CoApp.Powershell.Tools.dll')
+NestedModules = @('CoApp.Powershell.Tools.dll', 'SigningService.psm1')
 
 # Functions to export from this module
 FunctionsToExport = '*'
