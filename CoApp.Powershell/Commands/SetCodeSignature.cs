@@ -13,10 +13,10 @@
 namespace CoApp.Powershell.Commands {
     using System;
     using System.IO;
-    using System.Management.Automation;
-    using System.Security.Cryptography.X509Certificates;
     using System.Linq;
+    using System.Management.Automation;
     using System.Management.Automation.Runspaces;
+    using System.Security.Cryptography.X509Certificates;
     using ClrPlus.Core.Exceptions;
     using ClrPlus.Core.Extensions;
     using ClrPlus.Powershell.Core;
@@ -27,174 +27,115 @@ namespace CoApp.Powershell.Commands {
 
     [Cmdlet(VerbsCommon.Set, "CodeSignature")]
     public class SetCodeSignature : RestableCmdlet<SetCodeSignature> {
-
-       
-
         [Parameter(ValueFromPipeline = true, Mandatory = true, Position = 0)]
-        [ValidateNotNullOrEmpty()]
-       
+        [ValidateNotNullOrEmpty]
         public string Path {get; set;}
 
         [Parameter(Position = 1)]
-        
         public string Destination {get; set;}
 
         [Parameter]
-       
         public SwitchParameter StrongName {get; set;}
 
-        
-        private X509Certificate2 Certificate { get; set; }
-        
-        
+        private X509Certificate2 _certificate {get; set;}
 
         [Parameter]
-        public string CertificateString { get; set; }
+        public string Certificate {get; set;}
 
-       
-
-        protected override void ProcessRecord()
-        {
-            //we need to absolutize(?) the path so when it gets to the server, it's not wildly confused about what to do with it
+        protected override void ProcessRecord() {
+            //we need to normalize(?) the path so when it gets to the server, it's not wildly confused about what to do with it
             var inputPath = ResolveSource();
             Path = inputPath.AbsolutePath;
             ILocation outputPath = String.IsNullOrWhiteSpace(Destination) ? inputPath : ResolveDestinationLocation();
             Destination = outputPath.AbsolutePath;
 
-            if (Remote)
-            {
+            if (Remote) {
                 ProcessRecordViaRest();
                 return;
             }
 
-             try {
-            
-                using (var ps = Runspace.DefaultRunspace.Dynamic())
-                {
-
-                    if (!String.IsNullOrWhiteSpace(CertificateString))
-                    {
-                        Certificate = Enumerable.First(ps.GetItem(Path:CertificateString));
+            try {
+                using (var ps = Runspace.DefaultRunspace.Dynamic()) {
+                    if (!String.IsNullOrWhiteSpace(Certificate)) {
+                        _certificate = Enumerable.First(ps.GetItem(Path: Certificate));
                     }
-                   
 
                     var tempPath = CreateTempPath(inputPath);
-                    System.Console.WriteLine(tempPath);
-                    ps.CopyItemEx(Path: inputPath.AbsolutePath, Destination:tempPath);
-                    if (AttemptToSignAuthenticode(tempPath) || AttemptToSignOPC(tempPath))
-                    {
-                        if (Destination == null)
-                        {
-                         
+                    Console.WriteLine(tempPath);
+                    ps.CopyItemEx(Path: inputPath.AbsolutePath, Destination: tempPath);
+                    if (AttemptToSignAuthenticode(tempPath) || AttemptToSignOPC(tempPath)) {
+                        if (Destination == null) {
                             ps.CopyItemEx(Path: tempPath, Destination: Path, Force: true);
                             WriteObject(inputPath);
-                        }
-                        else
-                        {
-                            ps.CopyItemEx(Path:tempPath, Destination: outputPath);
+                        } else {
+                            ps.CopyItemEx(Path: tempPath, Destination: outputPath);
                             WriteObject(outputPath);
                         }
-
                     }
-
-
                 }
-          
-            } catch (Exception e ) {
-
+            } catch (Exception e) {
                 ThrowTerminatingError(new ErrorRecord(e, "0", ErrorCategory.PermissionDenied, null));
-               
-            }          
+            }
         }
-
 
         private string CreateTempPath(ILocation file) {
             return System.IO.Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString() + file.Name);
         }
 
         private bool AttemptToSignAuthenticode(string path) {
-
             try {
-                var authenticode = new AuthenticodeSigner(Certificate);
+                var authenticode = new AuthenticodeSigner(_certificate);
 
                 AttemptToSign(() => authenticode.Sign(path, StrongName));
 
                 return true;
             } catch (Exception) {
-
                 return false;
             }
-        
-
         }
 
         private bool AttemptToSignOPC(string path) {
             try {
-                var opc = new OPCSigner(Certificate);
+                var opc = new OPCSigner(_certificate);
 
-                return AttemptToSign( () => opc.Sign(path));
-                
+                return AttemptToSign(() => opc.Sign(path));
             } catch (Exception) {
-                
-                
                 return false;
             }
         }
 
-        private bool AttemptToSign(Action signAction ) {
-
-            try
-            {
+        private bool AttemptToSign(Action signAction) {
+            try {
                 signAction();
                 return true;
-            }
-            catch (FileNotFoundException fnfe)
-            {
+            } catch (FileNotFoundException fnfe) {
                 ThrowTerminatingError(new ErrorRecord(fnfe, "none", ErrorCategory.OpenError, null));
-
-            }
-            catch (PathTooLongException ptle)
-            {
+            } catch (PathTooLongException ptle) {
                 ThrowTerminatingError(new ErrorRecord(ptle, "none", ErrorCategory.InvalidData, null));
-
-            }
-            catch (UnauthorizedAccessException uae)
-            {
+            } catch (UnauthorizedAccessException uae) {
                 ThrowTerminatingError(new ErrorRecord(uae, "none", ErrorCategory.PermissionDenied, null));
-
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 ThrowTerminatingError(new ErrorRecord(e, "none", ErrorCategory.NotSpecified, null));
             }
             return false;
         }
-        
-        
 
-        private ILocation ResolveSource()
-        {
-
+        private ILocation ResolveSource() {
             ProviderInfo sourceProviderInfo;
             var source = SessionState.Path.GetResolvedProviderPathFromPSPath(Path, out sourceProviderInfo);
             var path = source[0];
             return GetLocationResolver(sourceProviderInfo).GetLocation(path);
         }
 
-        private ILocation ResolveDestinationLocation()
-        {
+        private ILocation ResolveDestinationLocation() {
             ProviderInfo destinationProviderInfo;
-            try
-            {
+            try {
                 //if Destination doesn't exist, this will throw
                 var destination = SessionState.Path.GetResolvedProviderPathFromPSPath(Destination, out destinationProviderInfo);
                 var path = destination[0];
 
                 return GetLocationResolver(destinationProviderInfo).GetLocation(path);
-
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 //the destination didn't exist, probably a file
                 var lastSlash = Destination.LastIndexOf('\\');
                 var probablyDirectoryDestination = Destination.Substring(0, lastSlash);
@@ -206,7 +147,7 @@ namespace CoApp.Powershell.Commands {
                 return GetLocationResolver(destinationProviderInfo).GetLocation(path);
             }
         }
-        
+
         public static ILocationResolver GetLocationResolver(ProviderInfo providerInfo) {
             var result = providerInfo as ILocationResolver;
             if (result == null) {
@@ -220,6 +161,4 @@ namespace CoApp.Powershell.Commands {
             return result;
         }
     }
-
-    
 }

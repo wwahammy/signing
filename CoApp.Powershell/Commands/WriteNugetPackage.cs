@@ -26,15 +26,18 @@ namespace CoApp.Powershell.Commands {
     [Cmdlet(AllVerbs.Write, "NuGetPackage")]
     public class WriteNuGetPackage : RestableCmdlet<WriteNuGetPackage> {
         static WriteNuGetPackage() {
-            var asmDir = Path.GetDirectoryName(typeof (WriteNuGetPackage).Assembly.Location);
-            if (!string.IsNullOrEmpty(asmDir)) {
-                var path = Environment.GetEnvironmentVariable("path");
+            try {
+                var asmDir = Path.GetDirectoryName(typeof (WriteNuGetPackage).Assembly.Location);
+                if (!string.IsNullOrEmpty(asmDir)) {
+                    var path = Environment.GetEnvironmentVariable("path");
 
-                if (string.IsNullOrEmpty(path) || !path.Contains(asmDir)) {
-                    Environment.SetEnvironmentVariable("path", path + ";" + asmDir + ";" + asmDir +"etc");
+                    if (string.IsNullOrEmpty(path) || !path.Contains(asmDir)) {
+                        Environment.SetEnvironmentVariable("path", path + ";" + asmDir + ";" + asmDir + "\\etc");
+                    }
                 }
+            } catch (Exception e) {
+                Console.WriteLine("EXC: {0}/{1}",e.Message, e.StackTrace);
             }
-
         }
 
         [Parameter(HelpMessage = "Autopackage script file (.autopkg)", Mandatory = true, Position = 0)]
