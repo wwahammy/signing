@@ -31,11 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClrPlus.Core">
-      <HintPath>..\packages\ClrPlus.Core.1.8.0.61\lib\net40\ClrPlus.Core.dll</HintPath>
+    <Reference Include="ClrPlus.Core, Version=1.8.0.63, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ClrPlus.Core.1.8.0.63\lib\net40\ClrPlus.Core.dll</HintPath>
     </Reference>
-    <Reference Include="ClrPlus.Platform">
-      <HintPath>..\packages\ClrPlus.Platform.1.8.0.61\lib\net40\ClrPlus.Platform.dll</HintPath>
+    <Reference Include="ClrPlus.Platform, Version=1.8.0.63, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ClrPlus.Platform.1.8.0.63\lib\net40\ClrPlus.Platform.dll</HintPath>
     </Reference>
     <Reference Include="ClrPlus.Powershell.Azure">
       <HintPath>..\packages\ClrPlus.Powershell.Azure.1.8.0.61\lib\net40\ClrPlus.Powershell.Azure.dll</HintPath>
@@ -49,17 +51,19 @@
     <Reference Include="ClrPlus.Powershell.Rest">
       <HintPath>..\packages\ClrPlus.Powershell.Rest.1.8.0.61\lib\net40\ClrPlus.Powershell.Rest.dll</HintPath>
     </Reference>
-    <Reference Include="ClrPlus.Scripting">
-      <HintPath>..\packages\ClrPlus.Scripting.1.8.0.61\lib\net40\ClrPlus.Scripting.dll</HintPath>
+    <Reference Include="ClrPlus.Scripting, Version=1.8.0.63, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ClrPlus.Scripting.1.8.0.63\lib\net40\ClrPlus.Scripting.dll</HintPath>
     </Reference>
     <Reference Include="ClrPlus.Scripting.MsBuild">
-      <HintPath>..\packages\ClrPlus.Scripting.MsBuild.1.8.0.61\lib\net40\ClrPlus.Scripting.MsBuild.dll</HintPath>
+      <HintPath>..\packages\ClrPlus.Scripting.MsBuild.1.8.0.63\lib\net40\ClrPlus.Scripting.MsBuild.dll</HintPath>
     </Reference>
     <Reference Include="ClrPlus.Tasks">
       <HintPath>..\packages\ClrPlus.Tasks.1.8.0.36\lib\net40\ClrPlus.Tasks.dll</HintPath>
     </Reference>
-    <Reference Include="ClrPlus.Windows.Api">
-      <HintPath>..\packages\ClrPlus.Windows.Api.1.8.0.61\lib\net40\ClrPlus.Windows.Api.dll</HintPath>
+    <Reference Include="ClrPlus.Windows.Api, Version=1.8.0.63, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ClrPlus.Windows.Api.1.8.0.63\lib\net40\ClrPlus.Windows.Api.dll</HintPath>
     </Reference>
     <Reference Include="ClrPlus.Windows.PeBinary">
       <HintPath>..\packages\ClrPlus.Windows.PeBinary.1.8.0.61\lib\net40\ClrPlus.Windows.PeBinary.dll</HintPath>
