@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="CoApp.Powershell (v1.8.40.0)" Language="1033" Version="1.8.40.0" Manufacturer="Outercurve Foundation, CoApp Project" UpgradeCode="a43c25d7-b22a-411c-b780-3a83479b1d26">
+  <Product Id="*" Name="CoApp.Powershell (v1.8.94.0)" Language="1033" Version="1.8.94.0" Manufacturer="Outercurve Foundation, CoApp Project" UpgradeCode="a43c25d7-b22a-411c-b780-3a83479b1d26">
 
     <Package Description="CoApp Developer Tools" InstallPrivileges="elevated" Comments="CoApp Developer Tools Installer" InstallerVersion="200" Compressed="yes"></Package>
 
     <Upgrade Id="a43c25d7-b22a-411c-b780-3a83479b1d26">
-      <UpgradeVersion OnlyDetect="no" Property="PREVIOUSFOUND" Minimum="1.0.0" IncludeMinimum="yes" Maximum="1.8.40.0" IncludeMaximum="no"></UpgradeVersion>
+      <UpgradeVersion OnlyDetect="no" Property="PREVIOUSFOUND" Minimum="1.0.0" IncludeMinimum="yes" Maximum="1.8.94.0" IncludeMaximum="no"></UpgradeVersion>
     </Upgrade>
 
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf"></WixVariable>
@@ -21,7 +21,10 @@
       <Directory Id="ProgramFilesFolder">
         <Directory Id="Outercurve" Name="Outercurve Foundation">
           <Directory Id="INSTALLFOLDER" Name="Modules">
-            <Directory Id="CoApp" Name="CoApp"/>
+            <Directory Id="CoApp" Name="CoApp">
+              <Directory Id="etc" Name="etc" />
+                
+            </Directory>
           </Directory>
         </Directory>
       </Directory>
@@ -34,6 +37,11 @@
         <File Source="$(var.SolutionDir)\output\v40\AnyCPU\$(var.Configuration)\bin\CoApp.Powershell.Tools.dll" />
         <File Source="$(var.SolutionDir)\output\v40\AnyCPU\$(var.Configuration)\bin\CoApp.psd1"/>
         
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="etc" Directory="etc">
+      <Component Id="etc" Guid="FBD01CDC-605E-1234-AC8E-C97913C31000">
         <File Source="$(var.SolutionDir)\output\v40\AnyCPU\$(var.Configuration)\bin\etc\nuget.exe"/>
         <File Source="$(var.SolutionDir)\output\v40\AnyCPU\$(var.Configuration)\bin\etc\basic.autopkg"/>
       </Component>
@@ -45,6 +53,7 @@
 
     <Feature Id="PowershellModule" Title="CoApp Powershell Module" Level="1" ConfigurableDirectory="INSTALLFOLDER">
       <ComponentGroupRef Id="CoApp"></ComponentGroupRef>
+      <ComponentGroupRef Id="etc"></ComponentGroupRef>
     </Feature>
   </Product>
 </Wix>

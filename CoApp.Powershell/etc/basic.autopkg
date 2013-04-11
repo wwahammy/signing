@@ -1,6 +1,10 @@
 ﻿// Basic Platform Configurations 
-
 configurations {
+	Toolset { 
+		key : "PlatformToolset"; 
+		choices: { v110, v100 };
+	};
+
 	Platform {
 		key : "Platform"; 
 		choices: { Win32, x64, ARM, AnyCPU };
@@ -11,8 +15,13 @@ configurations {
 		choices: { Release, Debug };
 	};
 
-	Toolset { 
-		key : "PlatformToolset"; 
-		choices: { v110, v100 };
+	Linkage { 
+		description = "Which version of the .lib file to link to this library";
+		choices += { dynamic, static, ltcg, sxs };
+
+		ltcg.description = "Link Time Compiler Generation";
+		dynamic.description = "Dynamic Library (DLL)";
+		static.description = "Static";
+		sxs.description = "Side-by-Side";
 	};
 };
