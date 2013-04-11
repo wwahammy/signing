@@ -43,7 +43,7 @@ namespace CoApp.Powershell.Commands {
         public string Certificate {get; set;}
 
         protected override void ProcessRecord() {
-            //we need to normalize(?) the path so when it gets to the server, it's not wildly confused about what to do with it
+            //we need to absolutize(?) the path so when it gets to the server, it's not wildly confused about what to do with it
             var inputPath = ResolveSource();
             Path = inputPath.AbsolutePath;
             ILocation outputPath = String.IsNullOrWhiteSpace(Destination) ? inputPath : ResolveDestinationLocation();
@@ -68,7 +68,7 @@ namespace CoApp.Powershell.Commands {
                             ps.CopyItemEx(Path: tempPath, Destination: Path, Force: true);
                             WriteObject(inputPath);
                         } else {
-                            ps.CopyItemEx(Path: tempPath, Destination: outputPath);
+                            ps.CopyItemEx(Path: tempPath, Destination: Destination,  Force:true);
                             WriteObject(outputPath);
                         }
                     }

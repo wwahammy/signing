@@ -20,8 +20,8 @@ using System.Reflection;
 // we publish it, so now we will have just one set of  Version  lines, and no strong 
 // naming until publishing.
 
-[assembly: AssemblyVersion("1.8.93.0")]
-[assembly: AssemblyFileVersion("1.8.93.0")]
+[assembly: AssemblyVersion("1.8.94.0")]
+[assembly: AssemblyFileVersion("1.8.94.0")]
 [assembly: AssemblyProduct("CoApp Developer Powershell CmdLets")]
 [assembly: AssemblyTrademark("CoApp is a non-registered trademark of Garrett Serack")]
 
