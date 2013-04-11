@@ -91,7 +91,7 @@ namespace CoApp.Powershell.Commands {
                         }
                         else
                         {
-                            ps.CopyItemEx(Path:tempPath, Destination: outputPath);
+                            ps.CopyItemEx(Path:tempPath, Destination: Destination, Force:true);
                             WriteObject(outputPath);
                         }
 
