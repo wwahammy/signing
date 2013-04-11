@@ -14,4 +14,14 @@ configurations {
 		key : "Configuration"; 
 		choices: { Release, Debug };
 	};
+
+	Linkage { 
+		description = "Which version of the .lib file to link to this library";
+		choices += { dynamic, static, ltcg, sxs };
+
+		ltcg.description = "Link Time Compiler Generation";
+		dynamic.description = "Dynamic Library (DLL)";
+		static.description = "Static";
+		sxs.description = "Side-by-Side";
+	};
 };

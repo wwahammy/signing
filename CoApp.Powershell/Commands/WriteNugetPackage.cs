@@ -18,10 +18,16 @@ using System.Text;
 namespace CoApp.Powershell.Commands {
     using System.IO;
     using System.Management.Automation;
+    using System.Management.Automation.Runspaces;
     using System.Threading.Tasks;
+    using ClrPlus.Core.Extensions;
+    using ClrPlus.Core.Tasks;
     using ClrPlus.Powershell.Core;
     using ClrPlus.Powershell.Rest.Commands;
+    using ClrPlus.Scripting.Languages.PropertySheet;
+    using ClrPlus.Scripting.Languages.PropertySheetV3;
     using ClrPlus.Scripting.MsBuild;
+    using ClrPlus.Scripting.MsBuild.Packaging;
 
     [Cmdlet(AllVerbs.Write, "NuGetPackage")]
     public class WriteNuGetPackage : RestableCmdlet<WriteNuGetPackage> {
@@ -46,8 +52,6 @@ namespace CoApp.Powershell.Commands {
         [Parameter(HelpMessage = "Don't clean up intermediate  files")]
         public SwitchParameter NoClean { get; set; }
 
-        [Parameter(HelpMessage = "Just generate the intermediate files")]
-        public SwitchParameter NoNupkg { get; set; }
 
         protected override void ProcessRecord() {
             if(Remote) {
@@ -58,15 +62,41 @@ namespace CoApp.Powershell.Commands {
             ProviderInfo packagePathProviderInfo;
             var pkgPath = SessionState.Path.GetResolvedProviderPathFromPSPath(Package, out packagePathProviderInfo);
 
-            using (var script = new PackageScript(pkgPath.FirstOrDefault())) {
-                if (script.Validate()) {
-                    script.SaveProps();
-                    script.SaveTargets();
-                    script.SaveNuspec();
+            using(var local = LocalEventSource) {
+                
+                local.Events += new SourceError((code, location, message, objects) => {
+                    location = location ?? SourceLocation.Unknowns;
+                    Host.UI.WriteErrorLine("{0}:Error {1}:{2}".format(location.FirstOrDefault(), code, message.format(objects)));
+                    return true;
+                });
 
-                    script.NuPack();
+                if (!NoWarnings) {
+                    local.Events += new SourceWarning((code, location, message, objects) => {
+                        WriteWarning("{0}:Warning {1}:{2}".format( (location ?? SourceLocation.Unknowns).FirstOrDefault(), message.format(objects)));
+                        return false;
+                    });
                 }
+                
+                local.Events += new SourceDebug((code, location, message, objects) => {
+                    WriteVerbose("{0}:DebugMessage {1}:{2}".format((location ?? SourceLocation.Unknowns).FirstOrDefault(), code, message.format(objects)));
+                    return false;
+                });
+             
+/*
+                Event<Warning>.Raise("msg123", "warning message");
+                Event<Debug>.Raise("dbg123", "debug message");
+                Event<Trace>.Raise("trace123", "trace message");
+                Event<Error>.Raise("err123", "error message");
+                Event<Progress>.Raise("activitycode", -1, "something", "working along");
+*/
+
+                using(var script = new PackageScript(pkgPath.FirstOrDefault())) {
+                    script.Save(PackageTypes.NuGet, !NoClean);
+                }
+             
             }
+
+         
         }
     }
 }

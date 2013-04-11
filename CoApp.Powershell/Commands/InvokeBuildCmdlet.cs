@@ -10,7 +10,7 @@ namespace CoApp.Powershell.Commands {
     using ClrPlus.Powershell.Core;
     using ClrPlus.Powershell.Rest.Commands;
 
-    [Cmdlet(AllVerbs.Invoke, "Build"),Alias("ptk")]
+    [Cmdlet(AllVerbs.Invoke, "Build")]
     public class InvokeBuildCmdlet : RestableCmdlet<InvokeBuildCmdlet> {
 
         [Parameter()]
